@@ -1,0 +1,19 @@
+{
+  "id": "mmutons-cyberpunk-red-vas",
+  "title": "MMuton's Cyberpunk RED Vehicle Actor Sheet",
+  "description": "Vehicle actor sheet with crew positions and skill delegation",
+  "version": "1.0.0",
+  "authors": [{"name": "MMuton"}],
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12.331"
+  },
+  "relationships": {
+    "systems": [{
+      "id": "cyberpunk-red-core",
+      "type": "system"
+    }]
+  },
+  "esmodules": ["mmutons-cyberpunk-red-vas.mjs"],
+  "styles": ["styles/vehicle.css"]
+}

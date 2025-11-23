@@ -1,0 +1,1099 @@
+/* VAS Base Sheet Styles */
+.vas-vehicle {
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+.vas-vehicle .window-content {
+  background: #1a1a1a !important;
+  padding: 0 !important;
+}
+
+/* VAS Header */
+.vas-vehicle .sheet-header {
+  display: flex !important;
+  gap: 15px !important;
+  padding: 15px !important;
+  background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%) !important;
+  border-bottom: 2px solid #ff0040 !important;
+  align-items: flex-start !important;
+}
+
+.vas-vehicle .profile-img {
+  width: 120px !important;
+  height: 120px !important;
+  object-fit: cover !important;
+  border: 2px solid #ff0040 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .header-fields {
+  flex: 1 !important;
+}
+
+.vas-vehicle .charname {
+  margin: 0 0 10px 0 !important;
+}
+
+.vas-vehicle .charname input {
+  font-size: 24px !important;
+  font-weight: bold !important;
+  color: #ff0040 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid #333 !important;
+  width: 100% !important;
+  padding: 5px 0 !important;
+}
+
+.vas-vehicle .stats-row {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 10px !important;
+  margin-top: 15px !important;
+}
+
+.vas-vehicle .stat {
+  background: rgba(0, 0, 0, 0.4) !important;
+  padding: 8px !important;
+  border-radius: 4px !important;
+  border: 1px solid #333 !important;
+  text-align: center !important;
+}
+
+.vas-vehicle .stat label {
+  display: block !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  color: #ff0040 !important;
+  margin-bottom: 4px !important;
+  text-transform: uppercase !important;
+}
+
+.vas-vehicle .stat input {
+  width: 100% !important;
+  text-align: center !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+  font-size: 16px !important;
+  padding: 4px !important;
+}
+
+/* VAS SDP Combined Display */
+.vas-vehicle .stat-sdp .sdp-values {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.vas-vehicle .stat-sdp .sdp-values input {
+  width: 45% !important;
+  padding: 4px 2px !important;
+}
+
+.vas-vehicle .sdp-separator {
+  color: #ff0040 !important;
+  font-weight: bold !important;
+  font-size: 18px !important;
+}
+
+/* VAS SP Combined Display */
+.vas-vehicle .stat-sp .sp-values {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.vas-vehicle .stat-sp .sp-values input {
+  width: 45% !important;
+  padding: 4px 2px !important;
+}
+
+.vas-vehicle .sp-separator {
+  color: #ff0040 !important;
+  font-weight: bold !important;
+  font-size: 18px !important;
+}
+
+/* VAS HSP Combined Display */
+.vas-vehicle .stat-hsp .hsp-values {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.vas-vehicle .stat-hsp .hsp-values input {
+  width: 45% !important;
+  padding: 4px 2px !important;
+}
+
+.vas-vehicle .hsp-separator {
+  color: #ff0040 !important;
+  font-weight: bold !important;
+  font-size: 18px !important;
+}
+
+/* VAS Tabs */
+.vas-vehicle .tabs {
+  display: flex !important;
+  gap: 5px !important;
+  padding: 10px 15px 0 !important;
+  background: #1a1a1a !important;
+  border-bottom: 2px solid #333 !important;
+  margin: 0 !important;
+}
+
+.vas-vehicle .tabs .item {
+  padding: 8px 20px !important;
+  background: #252525 !important;
+  border: 1px solid #333 !important;
+  border-bottom: none !important;
+  border-radius: 4px 4px 0 0 !important;
+  color: #888 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  text-decoration: none !important;
+}
+
+.vas-vehicle .tabs .item:hover {
+  background: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+
+.vas-vehicle .tabs .item.active {
+  background: #1a1a1a !important;
+  color: #ff0040 !important;
+  border-color: #ff0040 !important;
+  border-bottom: 2px solid #1a1a1a !important;
+  margin-bottom: -2px !important;
+}
+
+/* VAS Sheet Body */
+.vas-vehicle .sheet-body {
+  padding: 20px !important;
+  overflow-y: auto !important;
+  background: #1a1a1a !important;
+}
+
+.vas-vehicle .sheet-body .tab {
+  display: none !important;
+}
+
+.vas-vehicle .sheet-body .tab.active {
+  display: block !important;
+}
+
+/* VAS Positions Grid - 2x2 Compact Layout */
+.vas-vehicle .positions-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  margin-top: 0 !important;
+}
+
+.vas-vehicle .position-card {
+  background: #252525 !important;
+  border: 2px solid #333 !important;
+  border-radius: 6px !important;
+  padding: 10px !important;
+  transition: all 0.2s !important;
+  min-height: 200px !important;
+}
+
+.vas-vehicle .position-card:hover {
+  border-color: #ff0040 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 64, 0.3) !important;
+}
+
+/* VAS Add Position Card */
+.vas-vehicle .position-add-card {
+  border: 2px dashed #444 !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.vas-vehicle .position-add-card:hover {
+  border-color: #ff0040 !important;
+  background: rgba(255, 0, 64, 0.05) !important;
+}
+
+.vas-vehicle .position-add-card .position-add {
+  background: transparent !important;
+  border: none !important;
+  color: #888 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 20px !important;
+  transition: color 0.2s !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.vas-vehicle .position-add-card .position-add:hover {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .position-add-card .position-add i {
+  font-size: 32px !important;
+}
+
+.vas-vehicle .position-add-card .position-add span {
+  font-weight: bold !important;
+}
+
+.vas-vehicle .position-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+  padding-bottom: 6px !important;
+  border-bottom: 1px solid #444 !important;
+}
+
+.vas-vehicle .position-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex: 1 !important;
+}
+
+.vas-vehicle .position-name {
+  margin: 0 !important;
+  color: #ff0040 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .glass-hp {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px !important;
+  background: rgba(100, 180, 255, 0.2) !important;
+  border: 1px solid #64B4FF !important;
+  border-radius: 10px !important;
+  color: #64B4FF !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  text-decoration: none !important;
+}
+
+.vas-vehicle .glass-hp:hover {
+  background: rgba(100, 180, 255, 0.3) !important;
+  border-color: #8AC8FF !important;
+  color: #8AC8FF !important;
+  transform: translateY(-1px) !important;
+}
+
+.vas-vehicle .glass-hp i {
+  font-size: 10px !important;
+}
+
+.vas-vehicle .glass-hp.glass-broken {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .glass-hp.glass-broken:hover {
+  color: #ff3366 !important;
+}
+
+.vas-vehicle .position-controls {
+  display: flex !important;
+  gap: 10px !important;
+}
+
+.vas-vehicle .control-icon {
+  color: #888 !important;
+  cursor: pointer !important;
+  transition: color 0.2s !important;
+  font-size: 14px !important;
+}
+
+.vas-vehicle .control-icon:hover {
+  color: #ff0040 !important;
+}
+
+/* VAS Drop Zone */
+.vas-vehicle .drop-zone {
+  min-height: 70px !important;
+  border: 2px dashed #444 !important;
+  border-radius: 4px !important;
+  padding: 8px !important;
+  background: rgba(0,0,0,0.3) !important;
+  transition: all 0.2s !important;
+}
+
+.vas-vehicle .drop-zone.dragover {
+  border-color: #ff0040 !important;
+  background: rgba(255, 0, 64, 0.1) !important;
+}
+
+.vas-vehicle .drop-hint {
+  text-align: center !important;
+  color: #666 !important;
+  padding: 8px 5px !important;
+}
+
+.vas-vehicle .drop-hint i {
+  font-size: 24px !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+  color: #555 !important;
+}
+
+.vas-vehicle .drop-hint p {
+  margin: 3px 0 !important;
+  font-size: 11px !important;
+}
+
+.vas-vehicle .drop-hint .select-token {
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+}
+
+.vas-vehicle .assign-selected-token {
+  padding: 8px 16px !important;
+  background: #2a2a2a !important;
+  border: 1px solid #ff0040 !important;
+  color: #ff0040 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  margin-top: 10px !important;
+  transition: all 0.2s !important;
+  font-size: 12px !important;
+}
+
+.vas-vehicle .assign-selected-token:hover {
+  background: #ff0040 !important;
+  color: #fff !important;
+}
+
+/* VAS Occupants */
+.vas-vehicle .occupant-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px !important;
+  background: rgba(0,0,0,0.4) !important;
+  border-radius: 4px !important;
+  margin-bottom: 6px !important;
+  border: 1px solid #444 !important;
+  transition: border-color 0.2s !important;
+}
+
+.vas-vehicle .occupant-item:hover {
+  border-color: #ff0040 !important;
+}
+
+.vas-vehicle .occupant-avatar {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid #ff0040 !important;
+}
+
+.vas-vehicle .occupant-info {
+  flex: 1 !important;
+}
+
+.vas-vehicle .occupant-name {
+  margin: 0 0 2px 0 !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: #e0e0e0 !important;
+}
+
+.vas-vehicle .occupant-hp {
+  font-size: 10px !important;
+  color: #888 !important;
+}
+
+.vas-vehicle .occupant-actions {
+  display: flex !important;
+  gap: 10px !important;
+}
+
+.vas-vehicle .occupant-view,
+.vas-vehicle .occupant-remove {
+  color: #888 !important;
+  cursor: pointer !important;
+  transition: color 0.2s !important;
+  font-size: 14px !important;
+}
+
+.vas-vehicle .occupant-view:hover {
+  color: #4CAF50 !important;
+}
+
+.vas-vehicle .occupant-remove:hover {
+  color: #ff0040 !important;
+}
+
+/* VAS Skills */
+.vas-vehicle .position-skills {
+  margin-top: 8px !important;
+  padding: 8px !important;
+  background: rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
+  border: 1px solid #333 !important;
+  min-height: 45px !important;
+}
+
+.vas-vehicle .position-skills label {
+  display: block !important;
+  font-size: 9px !important;
+  color: #888 !important;
+  margin-bottom: 4px !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .skill-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+.vas-vehicle .skill-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 10px !important;
+  background: #ff0040 !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: background 0.2s, transform 0.1s !important;
+  text-decoration: none !important;
+}
+
+.vas-vehicle .skill-tag:hover {
+  background: #ff3366 !important;
+  transform: translateY(-1px) !important;
+}
+
+.vas-vehicle .skill-tag i {
+  font-size: 9px !important;
+}
+
+/* VAS Mounted Weapons - Detailed View */
+.vas-vehicle .position-weapons-detailed {
+  margin-top: 12px !important;
+  padding: 12px !important;
+  background: rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
+  border: 1px solid #333 !important;
+}
+
+.vas-vehicle .position-weapons-detailed label {
+  display: block !important;
+  font-size: 11px !important;
+  color: #888 !important;
+  margin-bottom: 10px !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .weapon-card {
+  background: rgba(0,0,0,0.4) !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  padding: 12px !important;
+  margin-bottom: 10px !important;
+  transition: border-color 0.2s !important;
+}
+
+.vas-vehicle .weapon-card:hover {
+  border-color: #ff0040 !important;
+}
+
+.vas-vehicle .weapon-card:last-child {
+  margin-bottom: 0 !important;
+}
+
+.vas-vehicle .weapon-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 10px !important;
+}
+
+.vas-vehicle .weapon-header img {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: cover !important;
+  border-radius: 4px !important;
+  border: 1px solid #555 !important;
+}
+
+.vas-vehicle .weapon-info {
+  flex: 1 !important;
+}
+
+.vas-vehicle .weapon-info h4 {
+  margin: 0 0 4px 0 !important;
+  color: #e0e0e0 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .weapon-stats {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.vas-vehicle .weapon-stats span {
+  font-size: 11px !important;
+  color: #888 !important;
+  background: rgba(0,0,0,0.3) !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+}
+
+.vas-vehicle .weapon-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.vas-vehicle .weapon-action-btn {
+  padding: 6px 10px !important;
+  background: linear-gradient(135deg, #ff0040, #cc0033) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+  text-align: center !important;
+}
+
+.vas-vehicle .weapon-action-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(255, 0, 64, 0.4) !important;
+}
+
+.vas-vehicle .weapon-action-btn i {
+  margin-right: 4px !important;
+}
+
+/* VAS Compact Weapon Display */
+.vas-vehicle .position-weapons-compact {
+  margin-top: 8px !important;
+  padding: 6px !important;
+  background: rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
+  border: 1px solid #333 !important;
+}
+
+.vas-vehicle .weapons-header {
+  font-size: 9px !important;
+  color: #888 !important;
+  margin-bottom: 6px !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .weapon-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 6px !important;
+  background: rgba(0,0,0,0.4) !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px !important;
+  margin-bottom: 4px !important;
+  transition: border-color 0.2s !important;
+}
+
+.vas-vehicle .weapon-row:hover {
+  border-color: #ff0040 !important;
+}
+
+.vas-vehicle .weapon-icon {
+  width: 24px !important;
+  height: 24px !important;
+  object-fit: cover !important;
+  border-radius: 3px !important;
+  border: 1px solid #ff0040 !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-name {
+  color: #e0e0e0 !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  min-width: 60px !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-name:hover {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .weapon-ammo {
+  font-size: 9px !important;
+  color: #888 !important;
+  min-width: 40px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-stat {
+  font-size: 9px !important;
+  padding: 2px 4px !important;
+  background: rgba(255, 0, 64, 0.2) !important;
+  border: 1px solid #ff0040 !important;
+  border-radius: 8px !important;
+  color: #e0e0e0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-fire-modes {
+  display: flex !important;
+  gap: 4px !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-fire-modes a {
+  color: #888 !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  transition: color 0.2s !important;
+}
+
+.vas-vehicle .weapon-fire-modes a:hover {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .weapon-actions-row {
+  display: flex !important;
+  gap: 4px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .weapon-action-icon {
+  color: #ff0040 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: color 0.2s, transform 0.2s !important;
+}
+
+.vas-vehicle .weapon-action-icon:hover {
+  color: #ff0066 !important;
+  transform: scale(1.15) !important;
+}
+
+/* VAS Action Buttons */
+.vas-vehicle .position-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+}
+
+.vas-vehicle .action-btn {
+  padding: 6px 8px !important;
+  background: linear-gradient(135deg, #ff0040, #cc0033) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+  text-align: center !important;
+}
+
+.vas-vehicle .action-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(255, 0, 64, 0.4) !important;
+}
+
+.vas-vehicle .action-btn i {
+  margin-right: 4px !important;
+}
+
+/* VAS Items */
+.vas-vehicle .items-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 15px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+.vas-vehicle .items-header h3 {
+  margin: 0 !important;
+  color: #ff0040 !important;
+  font-size: 20px !important;
+}
+
+.vas-vehicle .item-create {
+  padding: 8px 16px !important;
+  background: #ff0040 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+  font-size: 13px !important;
+}
+
+.vas-vehicle .item-create:hover {
+  background: #cc0033 !important;
+}
+
+.vas-vehicle .items-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.vas-vehicle .items-list .item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px !important;
+  background: #252525 !important;
+  border: 1px solid #333 !important;
+  border-radius: 4px !important;
+  margin-bottom: 8px !important;
+  transition: background 0.2s !important;
+}
+
+.vas-vehicle .items-list .item:hover {
+  background: #2a2a2a !important;
+  border-color: #ff0040 !important;
+}
+
+.vas-vehicle .item-image {
+  flex-shrink: 0 !important;
+}
+
+.vas-vehicle .item-image img {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: cover !important;
+  border-radius: 4px !important;
+  border: 1px solid #444 !important;
+}
+
+.vas-vehicle .item-name {
+  flex: 1 !important;
+  margin: 0 !important;
+  color: #e0e0e0 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .mounted-badge {
+  padding: 4px 8px !important;
+  background: #4CAF50 !important;
+  color: #fff !important;
+  border-radius: 3px !important;
+  font-size: 10px !important;
+  border: 1px solid #66BB6A !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-right: 4px !important;
+}
+
+.vas-vehicle .mounted-badge i {
+  font-size: 10px !important;
+}
+
+/* VAS Crammed Warning */
+.vas-vehicle .crammed-warning {
+  background: rgba(255, 152, 0, 0.2) !important;
+  border: 1px solid #FF9800 !important;
+  color: #FFA726 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  margin-bottom: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+/* VAS Draggable Occupants */
+.vas-vehicle .occupant-item.draggable {
+  cursor: move !important;
+}
+
+.vas-vehicle .drop-zone.dragover {
+  border-color: #ff0040 !important;
+  background: rgba(255, 0, 64, 0.1) !important;
+}
+
+.vas-vehicle .item-controls {
+  display: flex !important;
+  gap: 10px !important;
+}
+
+.vas-vehicle .item-controls a {
+  color: #888 !important;
+  cursor: pointer !important;
+  transition: color 0.2s !important;
+  font-size: 14px !important;
+}
+
+.vas-vehicle .item-controls a:hover {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .weapon-mount:hover {
+  color: #4CAF50 !important;
+}
+
+/* VAS Empty State */
+.vas-vehicle .empty-state {
+  text-align: center !important;
+  padding: 40px 20px !important;
+  color: #666 !important;
+  background: rgba(0,0,0,0.2) !important;
+  border-radius: 4px !important;
+  border: 1px dashed #444 !important;
+}
+
+.vas-vehicle .empty-state p {
+  margin: 8px 0 !important;
+  font-size: 14px !important;
+}
+
+/* VAS Form Groups */
+.vas-vehicle .form-group {
+  margin-bottom: 15px !important;
+}
+
+.vas-vehicle .form-group label {
+  display: block !important;
+  margin-bottom: 5px !important;
+  color: #ff0040 !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+}
+
+.vas-vehicle .form-group textarea {
+  width: 100% !important;
+  background: #252525 !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+  padding: 10px !important;
+  border-radius: 4px !important;
+  resize: vertical !important;
+  font-family: inherit !important;
+}
+
+/* VAS Chat Roll */
+.vas-roll {
+  border-left: 4px solid #ff0040 !important;
+  padding-left: 10px !important;
+}
+
+.vas-roll h3 {
+  margin: 0 0 8px 0 !important;
+  color: #ff0040 !important;
+}
+
+.vas-roll p {
+  margin: 4px 0 !important;
+}
+
+/* VAS Item Details */
+.vas-vehicle .item-details {
+  flex: 1 !important;
+}
+
+.vas-vehicle .item-properties {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 4px !important;
+}
+
+.vas-vehicle .property {
+  font-size: 11px !important;
+  color: #888 !important;
+  background: rgba(0,0,0,0.3) !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+}
+
+.vas-vehicle .item-type {
+  font-size: 11px !important;
+  color: #888 !important;
+  text-transform: capitalize !important;
+  background: rgba(0,0,0,0.3) !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+}
+
+.vas-vehicle .item-use {
+  color: #4CAF50 !important;
+}
+
+.vas-vehicle .item-use:hover {
+  color: #66BB6A !important;
+}
+
+/* VAS Cargo Categories */
+.vas-vehicle .cargo-categorized {
+  padding: 0 !important;
+}
+
+.vas-vehicle .cargo-category {
+  margin-bottom: 24px !important;
+}
+
+.vas-vehicle .category-divider {
+  background: linear-gradient(90deg, rgba(255, 0, 64, 0.2), transparent) !important;
+  border-left: 4px solid #ff0040 !important;
+  padding: 8px 12px !important;
+  margin-bottom: 8px !important;
+}
+
+.vas-vehicle .category-divider h4 {
+  margin: 0 !important;
+  color: #ff0040 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+/* VAS Upgrades Display */
+.vas-vehicle .upgrades-display {
+  padding: 0 !important;
+}
+
+.vas-vehicle .upgrades-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.vas-vehicle .upgrade-item {
+  background: #252525 !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  transition: border-color 0.2s !important;
+}
+
+.vas-vehicle .upgrade-item:hover {
+  border-color: #ff0040 !important;
+}
+
+.vas-vehicle .upgrade-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px solid #444 !important;
+}
+
+.vas-vehicle .upgrade-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vas-vehicle .upgrade-icon {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: cover !important;
+  border-radius: 4px !important;
+  border: 1px solid #ff0040 !important;
+}
+
+.vas-vehicle .upgrade-title h4 {
+  margin: 0 !important;
+  color: #e0e0e0 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.vas-vehicle .upgrade-controls {
+  display: flex !important;
+  gap: 12px !important;
+}
+
+.vas-vehicle .upgrade-controls a {
+  color: #888 !important;
+  cursor: pointer !important;
+  transition: color 0.2s !important;
+  font-size: 16px !important;
+}
+
+.vas-vehicle .upgrade-controls a:hover {
+  color: #ff0040 !important;
+}
+
+.vas-vehicle .upgrade-view:hover {
+  color: #4CAF50 !important;
+}
+
+.vas-vehicle .upgrade-description {
+  color: #b0b0b0 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  padding: 12px !important;
+  background: rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
+  border-left: 3px solid #ff0040 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+.vas-vehicle .upgrade-description pre {
+  background: rgba(0,0,0,0.4) !important;
+  padding: 8px !important;
+  border-radius: 4px !important;
+  margin: 8px 0 !important;
+  overflow-x: auto !important;
+}
+
+.vas-vehicle .upgrade-description code {
+  color: #4ECDC4 !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+/* VAS Mount/Unmount Buttons for Upgrades */
+.vas-vehicle .upgrade-mount {
+  color: #4CAF50 !important;
+}
+
+.vas-vehicle .upgrade-mount:hover {
+  color: #66BB6A !important;
+}
