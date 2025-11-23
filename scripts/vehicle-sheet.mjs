@@ -975,13 +975,19 @@ async _onFireCheckboxToggle(event) {
   }
   
   // VAS-GETACTOROWNER-001
-  _getActorOwner(actor) {
-    // Find the user who owns this actor
+  _getActorOwner(document) {
+    // Find the user who owns this actor or token
+    const actor = document?.actor ?? document;
+
     for (const user of game.users) {
-      if (actor.testUserPermission(user, "OWNER")) {
+      const hasActorOwnership = actor?.testUserPermission?.(user, "OWNER");
+      const hasTokenOwnership = document?.testUserPermission?.(user, "OWNER");
+
+      if (hasActorOwnership || hasTokenOwnership) {
         return user;
       }
     }
+
     return null;
   }
 
