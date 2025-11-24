@@ -1064,12 +1064,12 @@ async _onFireCheckboxToggle(event) {
           let tokenUpdates = {};
           const currentTokenOwnership = vehicleToken.document.ownership || {};
           if ((currentTokenOwnership[user.id] || 0) < CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER) {
-            tokenUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-            await vehicleToken.document.update(tokenUpdates);
-            console.log(`VAS | Granted OWNER to ${user.name} on vehicle token for position ${position.name}`);
+            const tokenUpdates = {
+              [`ownership.${user.id}`]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+            };
+            await tokenDoc.update(tokenUpdates);
+            console.log(`VAS | Granted OWNER to ${user.name} on vehicle token ${tokenDoc.name || tokenDoc.id} for position ${position.name}`);
           }
-        } else {
-          console.log(`VAS | No token on canvas - token control will be granted when token is placed`);
         }
       }
 
@@ -1118,15 +1118,22 @@ async _onFireCheckboxToggle(event) {
         let actorUpdates = {};
         actorUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
         await this.actor.update(actorUpdates);
-        
-        // Revoke token permissions
-        const vehicleToken = canvas.tokens?.placeables.find(t => t.actor?.id === this.actor.id);
-        if (vehicleToken) {
-          let tokenUpdates = {};
-          tokenUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
-          await vehicleToken.document.update(tokenUpdates);
+
+        // Revoke token permissions (active tokens and prototype)
+        const activeTokens = this.actor.getActiveTokens(true);
+        const tokenDocs = activeTokens.map(t => t.document);
+
+        if (tokenDocs.length === 0 && this.actor.prototypeToken) {
+          tokenDocs.push(this.actor.prototypeToken);
         }
-        
+
+        for (const tokenDoc of tokenDocs) {
+          const tokenUpdates = {
+            [`ownership.${user.id}`]: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE
+          };
+          await tokenDoc.update(tokenUpdates);
+        }
+
         console.log(`VAS | Revoked vehicle access from ${user.name}`);
       } else {
         console.log(`VAS | ${user.name} still has other occupants in vehicle - keeping permissions`);
