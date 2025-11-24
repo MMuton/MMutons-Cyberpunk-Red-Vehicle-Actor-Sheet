@@ -1043,8 +1043,11 @@ async _onFireCheckboxToggle(event) {
       const position = positions.find(p => p.id === positionId);
       
       // Determine required ownership level for the vehicle actor
-      // Occupants need OWNER so they can manage seating and interact with mounted gear
-      const desiredOwnership = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+      // Positions that grant token control or weapon control need OWNER so ammo/updates work
+      const requiresOwner = position?.grantsTokenControl || position?.canControlWeapons;
+      const desiredOwnership = requiresOwner
+        ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+        : CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
 
       // Grant actor permissions when below the required level
       let actorUpdates = {};
@@ -1053,7 +1056,7 @@ async _onFireCheckboxToggle(event) {
         actorUpdates[`ownership.${user.id}`] = desiredOwnership;
         await this.actor.update(actorUpdates);
         console.log(
-          `VAS | Granted OWNER to ${user.name} on vehicle actor`
+          `VAS | Granted ${requiresOwner ? 'OWNER' : 'OBSERVER'} to ${user.name} on vehicle actor`
         );
       }
       
@@ -1075,6 +1078,16 @@ async _onFireCheckboxToggle(event) {
 
     } catch (error) {
       console.error('VAS | Error granting vehicle access:', error);
+    }
+  }
+
+  // VAS-SYNCOCCUPANTACCESS-001
+  async _syncOccupantAccess(positions = []) {
+    // Iterate over positions and occupants to make sure permissions stay in sync after reloads
+    for (const position of positions) {
+      for (const occupantUuid of position.occupants || []) {
+        await this._grantVehicleAccess(occupantUuid, position.id);
+      }
     }
   }
 
