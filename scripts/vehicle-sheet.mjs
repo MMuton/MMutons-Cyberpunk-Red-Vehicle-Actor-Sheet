@@ -976,17 +976,33 @@ async _onFireCheckboxToggle(event) {
   
   // VAS-GETACTOROWNER-001
   _getActorOwner(document) {
-    // Find the user who owns this actor or token
+    // Find the user who owns this actor or any of its active tokens.
     const actor = document?.actor ?? document;
 
-    for (const user of game.users) {
-      const hasActorOwnership = actor?.testUserPermission?.(user, "OWNER");
-      const hasTokenOwnership = document?.testUserPermission?.(user, "OWNER");
-
-      if (hasActorOwnership || hasTokenOwnership) {
-        return user;
-      }
+    // Prefer token ownership (players may only have token control)
+    const activeTokens = actor?.getActiveTokens?.(true) || [];
+    if (document?.documentName === 'Token' && !activeTokens.includes(document)) {
+      activeTokens.unshift(document);
     }
+
+    const nonGmUsers = game.users.filter(user => !user.isGM);
+    const gmUsers = game.users.filter(user => user.isGM);
+
+    const checkOwners = (usersToCheck) => {
+      for (const user of usersToCheck) {
+        // Check token ownership first
+        const hasTokenOwnership = activeTokens.some(token => token.document?.testUserPermission?.(user, "OWNER"));
+        if (hasTokenOwnership) return user;
+
+        // Fall back to actor ownership
+        const hasActorOwnership = actor?.testUserPermission?.(user, "OWNER");
+        if (hasActorOwnership) return user;
+      }
+      return null;
+    };
+
+    // Prioritize non-GM owners so seated players receive access instead of returning the GM
+    return checkOwners(nonGmUsers) ?? checkOwners(gmUsers);
 
     return null;
   }
@@ -1022,19 +1038,25 @@ async _onFireCheckboxToggle(event) {
         );
       }
       
-      // Grant OWNER permission on vehicle token if position allows (for token control)
+      // Grant OWNER permission on vehicle token(s) if position allows (for token control)
       if (position?.grantsTokenControl) {
-        const vehicleToken = canvas.tokens?.placeables.find(t => t.actor?.id === this.actor.id);
-        if (vehicleToken) {
-          let tokenUpdates = {};
-          const currentTokenOwnership = vehicleToken.document.ownership || {};
+        const activeTokens = this.actor.getActiveTokens(true);
+        const tokenDocs = activeTokens.map(t => t.document);
+
+        if (tokenDocs.length === 0 && this.actor.prototypeToken) {
+          // No active token - ensure prototype grants control for when it is placed later
+          tokenDocs.push(this.actor.prototypeToken);
+        }
+
+        for (const tokenDoc of tokenDocs) {
+          const currentTokenOwnership = tokenDoc.ownership || {};
           if ((currentTokenOwnership[user.id] || 0) < CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER) {
-            tokenUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-            await vehicleToken.document.update(tokenUpdates);
-            console.log(`VAS | Granted OWNER to ${user.name} on vehicle token for position ${position.name}`);
+            const tokenUpdates = {
+              [`ownership.${user.id}`]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+            };
+            await tokenDoc.update(tokenUpdates);
+            console.log(`VAS | Granted OWNER to ${user.name} on vehicle token ${tokenDoc.name || tokenDoc.id} for position ${position.name}`);
           }
-        } else {
-          console.log(`VAS | No token on canvas - token control will be granted when token is placed`);
         }
       }
       
@@ -1073,15 +1095,22 @@ async _onFireCheckboxToggle(event) {
         let actorUpdates = {};
         actorUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
         await this.actor.update(actorUpdates);
-        
-        // Revoke token permissions
-        const vehicleToken = canvas.tokens?.placeables.find(t => t.actor?.id === this.actor.id);
-        if (vehicleToken) {
-          let tokenUpdates = {};
-          tokenUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
-          await vehicleToken.document.update(tokenUpdates);
+
+        // Revoke token permissions (active tokens and prototype)
+        const activeTokens = this.actor.getActiveTokens(true);
+        const tokenDocs = activeTokens.map(t => t.document);
+
+        if (tokenDocs.length === 0 && this.actor.prototypeToken) {
+          tokenDocs.push(this.actor.prototypeToken);
         }
-        
+
+        for (const tokenDoc of tokenDocs) {
+          const tokenUpdates = {
+            [`ownership.${user.id}`]: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE
+          };
+          await tokenDoc.update(tokenUpdates);
+        }
+
         console.log(`VAS | Revoked vehicle access from ${user.name}`);
       } else {
         console.log(`VAS | ${user.name} still has other occupants in vehicle - keeping permissions`);
