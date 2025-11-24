@@ -40,7 +40,10 @@ export class VehicleSheet extends ActorSheet {
     
     context.isOwner = this.actor.isOwner;
     context.editable = this.isEditable;
-    
+
+    // Ensure occupants retain the correct permissions whenever the sheet renders
+    await this._syncOccupantAccess(context.positions);
+
     return context;
   }
 
@@ -102,11 +105,12 @@ export class VehicleSheet extends ActorSheet {
     
     for (const pos of positions) {
       const occupants = [];
-      
+
       for (const uuid of (pos.occupants || [])) {
         try {
           const actor = await fromUuid(uuid);
           if (actor && actor.testUserPermission(game.user, "OBSERVER")) {
+            const ownerId = this._getActorOwner(actor)?.id;
             occupants.push({
               uuid: uuid,
               id: actor.id,
@@ -114,7 +118,8 @@ export class VehicleSheet extends ActorSheet {
               img: actor.img,
               type: actor.type,
               hp: actor.system.derivedStats?.hp?.value || 0,
-              hpMax: actor.system.derivedStats?.hp?.max || 0
+              hpMax: actor.system.derivedStats?.hp?.max || 0,
+              canCurrentUserManage: ownerId === game.user.id || game.user.isGM || this.actor.isOwner
             });
           }
         } catch(e) {
@@ -126,14 +131,15 @@ export class VehicleSheet extends ActorSheet {
         item.type === 'weapon' && item.getFlag('mmutons-cyberpunk-red-vas', 'mountedPosition') === pos.id
       );
       
-      const maxOccupants = pos.maxOccupants || 1;
-      
+        const maxOccupants = pos.maxOccupants || 1;
+        const allowedCrammedOccupants = maxOccupants + 1;
+
       prepared.push({
         ...pos,
         occupants: occupants,
         hasOccupants: occupants.length > 0,
         isFull: occupants.length >= maxOccupants,
-        isCrammed: occupants.length > maxOccupants,
+        isCrammed: occupants.length === allowedCrammedOccupants,
         weapons: assignedWeapons,
         hasWeapons: assignedWeapons.length > 0,
         skillsList: (pos.skills || '').split(',').map(s => s.trim()).filter(s => s),
@@ -158,10 +164,11 @@ export class VehicleSheet extends ActorSheet {
     html.find('.weapon-action-icon[data-action="reload"]').click(this._onReload.bind(this));
     html.find('.position-weapons-compact .rollable').click(this._onWeaponRoll.bind(this));
     html.find('.position-skills .skill-tag.rollable').click(this._onSkillRoll.bind(this));
-	html.find('.glass-hp').click(this._onGlassHpClick.bind(this));
-	html.find('.upgrade-mount').click(this._onUpgradeMount.bind(this));
+        html.find('.glass-hp').click(this._onGlassHpClick.bind(this));
+        html.find('.upgrade-mount').click(this._onUpgradeMount.bind(this));
     html.find('.upgrade-unmount').click(this._onUpgradeUnmount.bind(this));
     html.find('.upgrade-view').click(this._onItemEdit.bind(this));
+    html.find('.occupant-remove').click(this._onOccupantRemove.bind(this));
     
     // Drag and drop for occupants
     html.find('.occupant-item.draggable').each((i, el) => {
@@ -179,7 +186,6 @@ export class VehicleSheet extends ActorSheet {
     html.find('button.position-add').click(this._onPositionAdd.bind(this));
     html.find('.position-edit').click(this._onPositionEdit.bind(this));
     html.find('.position-delete').click(this._onPositionDelete.bind(this));
-    html.find('.occupant-remove').click(this._onOccupantRemove.bind(this));
     html.find('.weapon-mount').click(this._onWeaponMount.bind(this));
     html.find('.weapon-unmount').click(this._onWeaponUnmount.bind(this));
     html.find('.armor-equip').click(this._onArmorEquip.bind(this));
@@ -245,18 +251,19 @@ export class VehicleSheet extends ActorSheet {
       p.occupants = p.occupants.filter(u => u !== actor.uuid);
     });
     
-    // Add to target position (allow up to 2)
+    // Add to target position (allow one over maxOccupants for crammed state)
     const targetPos = positions.find(p => p.id === posId);
     if (targetPos) {
       if (!targetPos.occupants) targetPos.occupants = [];
-      
-      if (targetPos.occupants.length >= 2) {
-        ui.notifications.warn('Position cannot fit more than 2 occupants!');
+
+      const capacity = (targetPos.maxOccupants || 1) + 1;
+      if (targetPos.occupants.length >= capacity) {
+        ui.notifications.warn(`Position cannot fit more than ${capacity} occupants!`);
         return;
       }
-      
+
       targetPos.occupants.push(actor.uuid);
-      
+
       if (targetPos.occupants.length > (targetPos.maxOccupants || 1)) {
         ui.notifications.warn(`${actor.name} assigned (Position is crammed!)`);
       } else {
@@ -264,14 +271,14 @@ export class VehicleSheet extends ActorSheet {
       }
       
       await this.actor.setFlag('mmutons-cyberpunk-red-vas', 'positions', positions);
-	  
-	  // Grant vehicle access with debounce
-    if (!this._pendingAccessUpdates) this._pendingAccessUpdates = {};
-    clearTimeout(this._pendingAccessUpdates[actor.uuid]);
-    this._pendingAccessUpdates[actor.uuid] = setTimeout(() => {
-      this._grantVehicleAccess(actor.uuid, posId);
-      delete this._pendingAccessUpdates[actor.uuid];
-    }, 500);
+
+      // Grant vehicle access with debounce
+      if (!this._pendingAccessUpdates) this._pendingAccessUpdates = {};
+      clearTimeout(this._pendingAccessUpdates[actor.uuid]);
+      this._pendingAccessUpdates[actor.uuid] = setTimeout(() => {
+        this._grantVehicleAccess(actor.uuid, posId);
+        delete this._pendingAccessUpdates[actor.uuid];
+      }, 500);
     }
   }
 
@@ -473,7 +480,12 @@ export class VehicleSheet extends ActorSheet {
     event.preventDefault();
     const posId = event.currentTarget.dataset.positionId;
     const occUuid = event.currentTarget.dataset.occupantUuid;
-    
+
+    if (!this._canCurrentUserManageOccupant(occUuid)) {
+      ui.notifications.warn('You can only remove occupants you control.');
+      return;
+    }
+
     const positions = foundry.utils.deepClone(
       this.actor.getFlag('mmutons-cyberpunk-red-vas', 'positions') || []
     );
@@ -482,14 +494,14 @@ export class VehicleSheet extends ActorSheet {
     if (pos) {
       pos.occupants = (pos.occupants || []).filter(u => u !== occUuid);
       await this.actor.setFlag('mmutons-cyberpunk-red-vas', 'positions', positions);
-	  
-	  // Revoke vehicle access with debounce
-    if (!this._pendingAccessUpdates) this._pendingAccessUpdates = {};
-    clearTimeout(this._pendingAccessUpdates[occUuid]);
-    this._pendingAccessUpdates[occUuid] = setTimeout(() => {
-      this._revokeVehicleAccess(occUuid);
-      delete this._pendingAccessUpdates[occUuid];
-    }, 500);
+
+      // Revoke vehicle access with debounce
+      if (!this._pendingAccessUpdates) this._pendingAccessUpdates = {};
+      clearTimeout(this._pendingAccessUpdates[occUuid]);
+      this._pendingAccessUpdates[occUuid] = setTimeout(() => {
+        this._revokeVehicleAccess(occUuid);
+        delete this._pendingAccessUpdates[occUuid];
+      }, 500);
     }
   }
 
@@ -819,6 +831,11 @@ async _onFireCheckboxToggle(event) {
   // VAS-OCCUDRAGSTART-001
   _onOccupantDragStart(event) {
     const occupantUuid = event.currentTarget.dataset.occupantUuid;
+    if (!this._canCurrentUserManageOccupant(occupantUuid)) {
+      ui.notifications.warn('You can only move occupants you control.');
+      event.preventDefault();
+      return;
+    }
     const positionId = event.currentTarget.dataset.positionId;
     event.dataTransfer.setData('text/plain', JSON.stringify({
       type: 'occupant',
@@ -837,13 +854,18 @@ async _onFireCheckboxToggle(event) {
   async _onOccupantDrop(event) {
     event.preventDefault();
     event.currentTarget.classList.remove('dragover');
-    
+
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     if (data.type !== 'occupant') return;
-    
+
+    if (!this._canCurrentUserManageOccupant(data.uuid)) {
+      ui.notifications.warn('You can only move occupants you control.');
+      return;
+    }
+
     const toPositionId = event.currentTarget.dataset.positionId;
     const fromPositionId = data.fromPosition;
-    
+
     if (toPositionId === fromPositionId) return;
     
     const positions = foundry.utils.deepClone(
@@ -856,24 +878,33 @@ async _onFireCheckboxToggle(event) {
       fromPos.occupants = (fromPos.occupants || []).filter(u => u !== data.uuid);
     }
     
-    // Add to new position (allow up to 2)
+    // Add to new position (allow one over maxOccupants for crammed state)
     const toPos = positions.find(p => p.id === toPositionId);
     if (toPos) {
       if (!toPos.occupants) toPos.occupants = [];
-      
-      if (toPos.occupants.length >= 2) {
-        ui.notifications.warn('Position cannot fit more than 2 occupants!');
+
+      const capacity = (toPos.maxOccupants || 1) + 1;
+      if (toPos.occupants.length >= capacity) {
+        ui.notifications.warn(`Position cannot fit more than ${capacity} occupants!`);
         return;
       }
-      
+
       toPos.occupants.push(data.uuid);
-      
-      if (toPos.occupants.length > (toPos.maxOccupants || 1)) {
+
+      if (toPos.occupants.length === (toPos.maxOccupants || 1) + 1) {
         ui.notifications.warn('Position is now crammed!');
       }
     }
-    
+
     await this.actor.setFlag('mmutons-cyberpunk-red-vas', 'positions', positions);
+
+    // Ensure permissions reflect new seating
+    if (!this._pendingAccessUpdates) this._pendingAccessUpdates = {};
+    clearTimeout(this._pendingAccessUpdates[data.uuid]);
+    this._pendingAccessUpdates[data.uuid] = setTimeout(() => {
+      this._grantVehicleAccess(data.uuid, toPositionId);
+      delete this._pendingAccessUpdates[data.uuid];
+    }, 500);
   }
   
 // VAS-GLASSHPCLICK-001
@@ -976,35 +1007,26 @@ async _onFireCheckboxToggle(event) {
   
   // VAS-GETACTOROWNER-001
   _getActorOwner(document) {
-    // Find the user who owns this actor or any of its active tokens.
+    // Find the user who owns this actor or token
     const actor = document?.actor ?? document;
 
-    // Prefer token ownership (players may only have token control)
-    const activeTokens = actor?.getActiveTokens?.(true) || [];
-    if (document?.documentName === 'Token' && !activeTokens.includes(document)) {
-      activeTokens.unshift(document);
+    for (const user of game.users) {
+      const hasActorOwnership = actor?.testUserPermission?.(user, "OWNER");
+      const hasTokenOwnership = document?.testUserPermission?.(user, "OWNER");
+
+      if (hasActorOwnership || hasTokenOwnership) {
+        return user;
+      }
     }
 
-    const nonGmUsers = game.users.filter(user => !user.isGM);
-    const gmUsers = game.users.filter(user => user.isGM);
-
-    const checkOwners = (usersToCheck) => {
-      for (const user of usersToCheck) {
-        // Check token ownership first
-        const hasTokenOwnership = activeTokens.some(token => token.document?.testUserPermission?.(user, "OWNER"));
-        if (hasTokenOwnership) return user;
-
-        // Fall back to actor ownership
-        const hasActorOwnership = actor?.testUserPermission?.(user, "OWNER");
-        if (hasActorOwnership) return user;
-      }
-      return null;
-    };
-
-    // Prioritize non-GM owners so seated players receive access instead of returning the GM
-    return checkOwners(nonGmUsers) ?? checkOwners(gmUsers);
-
     return null;
+  }
+
+  _canCurrentUserManageOccupant(occupantUuid) {
+    if (game.user.isGM || this.actor.isOwner) return true;
+    const occupantActor = fromUuidSync?.(occupantUuid) || game.actors.get(occupantUuid) || game.actors.tokens?.get(occupantUuid);
+    const ownerId = this._getActorOwner(occupantActor)?.id;
+    return ownerId === game.user.id;
   }
 
   // VAS-GRANTVEHICLEACCESS-001
@@ -1021,11 +1043,8 @@ async _onFireCheckboxToggle(event) {
       const position = positions.find(p => p.id === positionId);
       
       // Determine required ownership level for the vehicle actor
-      // Positions that grant token control or weapon control need OWNER so ammo/updates work
-      const requiresOwner = position?.grantsTokenControl || position?.canControlWeapons;
-      const desiredOwnership = requiresOwner
-        ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
-        : CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+      // Occupants need OWNER so they can manage seating and interact with mounted gear
+      const desiredOwnership = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
 
       // Grant actor permissions when below the required level
       let actorUpdates = {};
@@ -1034,22 +1053,16 @@ async _onFireCheckboxToggle(event) {
         actorUpdates[`ownership.${user.id}`] = desiredOwnership;
         await this.actor.update(actorUpdates);
         console.log(
-          `VAS | Granted ${requiresOwner ? 'OWNER' : 'OBSERVER'} to ${user.name} on vehicle actor`
+          `VAS | Granted OWNER to ${user.name} on vehicle actor`
         );
       }
       
-      // Grant OWNER permission on vehicle token(s) if position allows (for token control)
+      // Grant OWNER permission on vehicle token if position allows (for token control)
       if (position?.grantsTokenControl) {
-        const activeTokens = this.actor.getActiveTokens(true);
-        const tokenDocs = activeTokens.map(t => t.document);
-
-        if (tokenDocs.length === 0 && this.actor.prototypeToken) {
-          // No active token - ensure prototype grants control for when it is placed later
-          tokenDocs.push(this.actor.prototypeToken);
-        }
-
-        for (const tokenDoc of tokenDocs) {
-          const currentTokenOwnership = tokenDoc.ownership || {};
+        const vehicleToken = canvas.tokens?.placeables.find(t => t.actor?.id === this.actor.id);
+        if (vehicleToken) {
+          let tokenUpdates = {};
+          const currentTokenOwnership = vehicleToken.document.ownership || {};
           if ((currentTokenOwnership[user.id] || 0) < CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER) {
             const tokenUpdates = {
               [`ownership.${user.id}`]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
@@ -1059,9 +1072,19 @@ async _onFireCheckboxToggle(event) {
           }
         }
       }
-      
+
     } catch (error) {
       console.error('VAS | Error granting vehicle access:', error);
+    }
+  }
+
+  // VAS-SYNCOCCUPANTACCESS-001
+  async _syncOccupantAccess(positions = []) {
+    // Iterate over positions and occupants to make sure permissions stay in sync after reloads
+    for (const position of positions) {
+      for (const occupantUuid of position.occupants || []) {
+        await this._grantVehicleAccess(occupantUuid, position.id);
+      }
     }
   }
 
@@ -1167,13 +1190,18 @@ async _onFireCheckboxToggle(event) {
     const targetPos = positions.find(p => p.id === posId);
     if (targetPos) {
       if (!targetPos.occupants) targetPos.occupants = [];
-      
-      if (targetPos.occupants.length >= (targetPos.maxOccupants || 1)) {
-        ui.notifications.warn('Position is at maximum capacity');
+
+      const capacity = (targetPos.maxOccupants || 1) + 1;
+      if (targetPos.occupants.length >= capacity) {
+        ui.notifications.warn(`Position cannot fit more than ${capacity} occupants!`);
         return false;
       }
-      
+
       targetPos.occupants.push(actor.uuid);
+
+      if (targetPos.occupants.length === (targetPos.maxOccupants || 1) + 1) {
+        ui.notifications.warn('Position is now crammed!');
+      }
     }
     
     await this.actor.setFlag('mmutons-cyberpunk-red-vas', 'positions', positions);
