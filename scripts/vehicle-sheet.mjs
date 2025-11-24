@@ -40,7 +40,10 @@ export class VehicleSheet extends ActorSheet {
     
     context.isOwner = this.actor.isOwner;
     context.editable = this.isEditable;
-    
+
+    // Ensure occupants retain the correct permissions whenever the sheet renders
+    await this._syncOccupantAccess(context.positions);
+
     return context;
   }
 
@@ -1004,13 +1007,22 @@ async _onFireCheckboxToggle(event) {
       const positions = this.actor.getFlag('mmutons-cyberpunk-red-vas', 'positions') || [];
       const position = positions.find(p => p.id === positionId);
       
-      // Always grant OBSERVER permission on vehicle actor (for sheet access)
+      // Determine required ownership level for the vehicle actor
+      // Positions that grant token control or weapon control need OWNER so ammo/updates work
+      const requiresOwner = position?.grantsTokenControl || position?.canControlWeapons;
+      const desiredOwnership = requiresOwner
+        ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+        : CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+
+      // Grant actor permissions when below the required level
       let actorUpdates = {};
       const currentActorOwnership = this.actor.ownership || {};
-      if ((currentActorOwnership[user.id] || 0) < CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER) {
-        actorUpdates[`ownership.${user.id}`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+      if ((currentActorOwnership[user.id] || 0) < desiredOwnership) {
+        actorUpdates[`ownership.${user.id}`] = desiredOwnership;
         await this.actor.update(actorUpdates);
-        console.log(`VAS | Granted OBSERVER to ${user.name} on vehicle actor`);
+        console.log(
+          `VAS | Granted ${requiresOwner ? 'OWNER' : 'OBSERVER'} to ${user.name} on vehicle actor`
+        );
       }
       
       // Grant OWNER permission on vehicle token if position allows (for token control)
@@ -1028,9 +1040,19 @@ async _onFireCheckboxToggle(event) {
           console.log(`VAS | No token on canvas - token control will be granted when token is placed`);
         }
       }
-      
+
     } catch (error) {
       console.error('VAS | Error granting vehicle access:', error);
+    }
+  }
+
+  // VAS-SYNCOCCUPANTACCESS-001
+  async _syncOccupantAccess(positions = []) {
+    // Iterate over positions and occupants to make sure permissions stay in sync after reloads
+    for (const position of positions) {
+      for (const occupantUuid of position.occupants || []) {
+        await this._grantVehicleAccess(occupantUuid, position.id);
+      }
     }
   }
 
