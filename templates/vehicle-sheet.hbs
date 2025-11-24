@@ -107,7 +107,7 @@
                   <a class="occupant-view" data-occupant-uuid="{{this.uuid}}" title="View Sheet">
                     <i class="fas fa-eye"></i>
                   </a>
-                  {{#if ../../editable}}
+                  {{#if (or ../../editable this.canCurrentUserManage)}}
                   <a class="occupant-remove" data-position-id="{{../this.id}}" data-occupant-uuid="{{this.uuid}}" title="Remove">
                     <i class="fas fa-times"></i>
                   </a>
